@@ -78,8 +78,11 @@ app.EventAuxView = Backbone.View.extend({
 			event_id: this.model.attributes.calEvent.eventID
 		};
 		var json = JSON.stringify(object);
+		
+		/* Needs to change to google functions
 		google.script.run.withSuccessHandler(Helper.updateEvent)
 			.editEvent(json);
+		*/
 
 		// Set to model
 		this.model.set({

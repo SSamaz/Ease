@@ -1,3 +1,16 @@
+function main() {
+	$.ajax({
+		url: "https://script.google.com/macros/s/AKfycbxQavSesJpTI1mNOjzud8dUpHxvarjuL5DKGC53O_m758PZoUcP/exec",
+		method: "POST",
+		dataType: "jsonp",
+		data: JSON.stringify({fnct: "Test"}),
+		success: function(res) {
+			console.log(res);
+		}
+	})
+}
+main();
+
 var Helper = { // General Helper object
 
 	// Constants
