@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/SSamaz/Ease_2.0/issues"
   },
-  "homepage": "https://github.com/SSamaz/Ease_2.0#readme"
+  "homepage": "https://github.com/SSamaz/Ease_2.0#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "firebase-functions": "^0.8.0"
+  }
 }

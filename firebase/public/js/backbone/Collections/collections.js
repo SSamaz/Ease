@@ -170,17 +170,12 @@ app.EventList = Backbone.Firebase.Collection.extend({
 	      var month = parseInt(moment(this.models[i].attributes.calEvent.calStart).format("M")); // 1 starting list ... weird
 
 	      if (month >= 10) { // October or better, NEEDS TO CHANGE EVENTUALLY!!!!
-
-	        console.log(month + ' ' + this.models[i].attributes.numOfPeople);
 	        output[month - 1] += parseInt(this.models[i].attributes.numOfPeople);
-
 	      }
 
 	    }
 
 	  }
-
-	  console.log(output);
 	  return output;
 
 	},

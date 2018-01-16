@@ -1,21 +1,25 @@
 /*
 
 	Application Loader
-	Version 0.0.1
+	Version 0.0.4
 	
 	Process:
 		1. Read config.json file that was created by builder.js
 		2. Iterate through config.views and load templates in #templates
-		3. Iterate through config.backbone and execute script file (effects app object)
-		4. Build primary app.AppView view object 
+		3. Iterate through config.backbone elements and iterate through the array, then execute script file (effects app object)
+		4. Stop loading animation
+		5. Build primary app.AppView view object 
+
+	New Objective:
+		Needs to not be async
 
 */
 
 
 var config;
-$(document).ready(load);
+$(document).ready(loadConfig);
 
-function load() {
+function loadConfig() {
 
 	console.log('Loading...');
 
@@ -30,31 +34,35 @@ function load() {
 		},
 		success: function(res) {
 			config = res;
-			loadViews();
+			load();
 		}
 	});
 
 }
 
-function loadViews() {
+function loadFiles(dir, files, fnct) { // Directory, Files, success(res)
 
-	// Iterate over the views array and load the files into a new div in the #templates element
-	var num_files = config.views.length;
-	for (var i = 0; i < config.views.length; i++) {
+	var num_files = files.length;
+	for (var i = 0; i < files.length; i++) {
 	
 		$.ajax({
-			url: '/views/' + config.views[i],
-			dataType: 'HTML',
+			url: dir + files[i],
+			async: false,
 			error: function(xhr, textStatus, errorThrown) {
 				console.log(xhr);
 				console.log(textStatus);
 				console.log(errorThrown);
+				try {
+					toastr.error("There was an error");
+					toastr.error(errorThrown);
+				} catch (err) {
+					// Toastr not installed
+				}
 			},
 			success: function(res) {
-				$('#templates').append(res);
-				--num_files;
-				if (num_files === 0) {
-					loadBackbone();
+				// Javascript evaluates automatically
+				if (fnct !== null && fnct !== undefined) {
+					fnct(res);
 				}
 			}
 		});
@@ -63,29 +71,22 @@ function loadViews() {
 
 }
 
-function loadBackbone() {
+function load() {
 
-	// Iterate through config.backbone elements and execute script file
-	var num_files = config.backbone.length;
-	for (var i = 0; i < config.backbone.length; i++) {
+	loadFiles('/views/', config.views, function(res) {
+		$('#templates').append(res);
+	});
+
+	loadFiles('/js/backbone/models/', config.backbone.models);
 	
-		$.ajax({
-			url: '/js/backbone/' + config.backbone[i],
-			error: function(xhr, textStatus, errorThrown) {
-				console.log(xhr);
-				console.log(textStatus);
-				console.log(errorThrown);
-			},
-			success: function(res) {
-				// Loads automatically
-				--num_files;
-				if (num_files === 0) {
-					loadPage();
-				}
-			}
-		});
+	loadFiles('/js/backbone/collections/', config.backbone.collections);
 	
-	}
+	loadFiles('/js/backbone/views/', config.backbone.views);
+	
+	setTimeout(function() {
+		$('#loading').remove();
+		loadPage();
+	}, 250);
 
 }
 
